@@ -1,10 +1,10 @@
 import { NavBar } from "@/components/nav-bar";
 
-export default function Home() {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <NavBar />
-      <main className="">Home Page</main>
+      {children}
     </>
   );
 }
