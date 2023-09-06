@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { Activity } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import ActivityDuration from "./duration";
-import { Play, Square } from "lucide-react";
+import { ArrowRight, Play, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type NewActivityProps = {
@@ -46,7 +46,7 @@ const NewActivity = ({ activity }: NewActivityProps) => {
 
   return (
     <div className="space-y-2">
-      <h1 className="font-semibold">What are you working on?</h1>
+      <h1 className="text-lg font-semibold">What are you working on?</h1>
       <form
         action={activity ? stopActivity : startActivity}
         className="flex items-center gap-4"
@@ -69,7 +69,39 @@ const NewActivity = ({ activity }: NewActivityProps) => {
   );
 };
 
-const DailyActivities = () => {};
+type DialyActivitiesProps = { activities: Activity[] };
+
+const DailyActivities = ({ activities }: DialyActivitiesProps) => {
+  console.log(activities);
+
+  return (
+    <div className="space-y-2">
+      <h1 className="text-lg font-semibold">What you've done today.</h1>
+      <ul>
+        {activities.map((activity) => (
+          <li className="py-2 space-x-2 flex items-center" key={activity.id}>
+            <span className="w-1/3">{activity.name}</span>
+            <span>
+              {new Intl.DateTimeFormat(undefined, {
+                hour: "numeric",
+                minute: "numeric",
+              }).format(activity.startAt)}
+            </span>
+
+            <ArrowRight size={16} />
+
+            <span>
+              {new Intl.DateTimeFormat(undefined, {
+                hour: "numeric",
+                minute: "numeric",
+              }).format(activity.endAt || new Date())}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
 export default async function TrackPage() {
   const user = await getUserSession();
@@ -82,9 +114,49 @@ export default async function TrackPage() {
     },
   });
 
+  const now = new Date();
+
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+
+  const endOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    23,
+    59,
+    59
+  );
+
+  const dailyActivities = await prisma.activity.findMany({
+    where: {
+      tenantId: user.tenant.id,
+      userId: user.id,
+      OR: [
+        {
+          startAt: {
+            equals: startOfToday,
+          },
+        },
+        {
+          endAt: {
+            lte: endOfToday,
+          },
+        },
+      ],
+    },
+    orderBy: {
+      startAt: "asc",
+    },
+  });
+
   return (
-    <main className="container py-4">
+    <main className="container py-4 space-y-8">
       <NewActivity activity={currentActivity} />
+      <DailyActivities activities={dailyActivities} />
     </main>
   );
 }
