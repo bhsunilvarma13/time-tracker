@@ -76,7 +76,7 @@ const DailyActivities = ({ activities }: DialyActivitiesProps) => {
 
   return (
     <div className="space-y-2">
-      <h1 className="text-lg font-semibold">What you've done today.</h1>
+      <h1 className="text-lg font-semibold">What you&apos;ve done today.</h1>
       <ul>
         {activities.map((activity) => (
           <li className="py-2 space-x-2 flex items-center" key={activity.id}>
