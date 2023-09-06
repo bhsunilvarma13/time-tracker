@@ -1,11 +1,17 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Activity } from "@prisma/client";
-import { ArrowRight, Calendar } from "lucide-react";
+import { ArrowRight, CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { updateActivity } from "./actions";
 import { Button } from "@/components/ui/button";
 import { pad } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 
 type Props = {
   activity: Activity;
@@ -19,6 +25,20 @@ type EditDateTimeProps = {
 
 const EditDateTime = ({ name, value, onChange }: EditDateTimeProps) => {
   const [date, setDate] = useState(value);
+
+  console.log(date);
+
+  const onDate = (d: Date | undefined) => {
+    if (!d) return;
+    d.setHours(date.getHours());
+    d.setMinutes(date.getMinutes());
+    d.setSeconds(date.getSeconds());
+
+    setDate(d);
+
+    onChange && onChange(d);
+  };
+
   return (
     <div>
       <div className="relative flex items-center">
@@ -36,7 +56,14 @@ const EditDateTime = ({ name, value, onChange }: EditDateTimeProps) => {
             onChange && onChange(newDate);
           }}
         />
-        <Calendar size={16} className="absolute right-2" />
+        <Popover>
+          <PopoverTrigger className="absolute right-2">
+            <CalendarIcon size={16} />
+          </PopoverTrigger>
+          <PopoverContent>
+            <Calendar mode="single" selected={date} onSelect={onDate} />
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );
