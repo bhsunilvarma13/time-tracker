@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Avatar, AvatarImage } from "../ui/avatar";
 import { getUserSession } from "@/lib/auth";
+import Avatar from "./avatar";
 
 const links = [{ href: "/track", label: "Track" }];
 
@@ -9,7 +9,7 @@ export async function NavBar() {
 
   return (
     <div className="shadow w-full">
-      <div className="flex container mx-auto items-center py-2 space-x-4">
+      <div className="flex container items-center py-2 space-x-4">
         <Link href="/" className="hover:bg-slate-100 py-1 px-2 rounded-md">
           <span className="font-semibold">Time Tracker</span>
         </Link>
@@ -28,9 +28,7 @@ export async function NavBar() {
           </ul>
         </nav>
         <span className="flex-grow" />
-        <Avatar>
-          <AvatarImage src={user.image} referrerPolicy="no-referrer" />
-        </Avatar>
+        <Avatar user={user} />
       </div>
     </div>
   );

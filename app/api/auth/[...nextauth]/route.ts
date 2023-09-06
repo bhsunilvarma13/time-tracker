@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
+import { session } from "@/lib/auth";
 
 const authOptions: NextAuthOptions = {
   session: {
@@ -42,6 +43,26 @@ const authOptions: NextAuthOptions = {
       });
 
       return true;
+    },
+
+    session,
+
+    async jwt({ token, account, profile }) {
+      if (profile) {
+        const user = await prisma.user.findUnique({
+          where: {
+            email: profile.email,
+          },
+        });
+
+        if (!user) throw new Error("No user");
+
+        token.id = user.id;
+        token.tenant = {
+          id: user.tenantId,
+        };
+      }
+      return token;
     },
   },
 };
