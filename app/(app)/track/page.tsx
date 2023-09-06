@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import ActivityDuration from "./duration";
 import { ArrowRight, Play, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ActivityItemRow } from "./activity-item-row";
 
 type NewActivityProps = {
   activity?: Activity | null;
@@ -57,8 +58,10 @@ const NewActivity = ({ activity }: NewActivityProps) => {
         <Button
           variant="outline"
           className={cn(
-            "rounded-full px-2",
-            activity ? "bg-red-600 text-white" : ""
+            "rounded-md px-2",
+            activity
+              ? "bg-red-600 text-white"
+              : "hover:bg-green-600 hover:text-white"
           )}
           type="submit"
         >
@@ -72,31 +75,12 @@ const NewActivity = ({ activity }: NewActivityProps) => {
 type DialyActivitiesProps = { activities: Activity[] };
 
 const DailyActivities = ({ activities }: DialyActivitiesProps) => {
-  console.log(activities);
-
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       <h1 className="text-lg font-semibold">What you&apos;ve done today.</h1>
-      <ul>
+      <ul className="space-y-2">
         {activities.map((activity) => (
-          <li className="py-2 space-x-2 flex items-center" key={activity.id}>
-            <span className="w-1/3">{activity.name}</span>
-            <span>
-              {new Intl.DateTimeFormat(undefined, {
-                hour: "numeric",
-                minute: "numeric",
-              }).format(activity.startAt)}
-            </span>
-
-            <ArrowRight size={16} />
-
-            <span>
-              {new Intl.DateTimeFormat(undefined, {
-                hour: "numeric",
-                minute: "numeric",
-              }).format(activity.endAt || new Date())}
-            </span>
-          </li>
+          <ActivityItemRow key={activity.id} activity={activity} />
         ))}
       </ul>
     </div>
