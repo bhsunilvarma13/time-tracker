@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Activity } from "@prisma/client";
 import { ArrowRight, CalendarIcon } from "lucide-react";
 import { useState } from "react";
-import { updateActivity } from "./actions";
+import { deleteActivity, updateActivity } from "./actions";
 import { Button } from "@/components/ui/button";
 import { pad } from "@/lib/utils";
 import {
@@ -25,8 +25,6 @@ type EditDateTimeProps = {
 
 const EditDateTime = ({ name, value, onChange }: EditDateTimeProps) => {
   const [date, setDate] = useState(value);
-
-  console.log(date);
 
   const onDate = (d: Date | undefined) => {
     if (!d) return;
@@ -75,7 +73,7 @@ type EditRowProps = Props & {
 
 const EditItemRow = ({ activity, onSave }: EditRowProps) => {
   return (
-    <li>
+    <li className="py-2">
       <form
         action={async (data) => {
           await updateActivity(data);
@@ -90,8 +88,13 @@ const EditItemRow = ({ activity, onSave }: EditRowProps) => {
           defaultValue={activity.name || ""}
         />
 
+        <input type="hidden" name="id" defaultValue={activity.id} />
+
         <EditDateTime name="startAt" value={activity.startAt} />
+
         <EditDateTime name="endAt" value={activity.endAt || new Date()} />
+
+        <span className="flex-grow" />
 
         <Button type="submit">Save</Button>
       </form>
@@ -99,7 +102,12 @@ const EditItemRow = ({ activity, onSave }: EditRowProps) => {
   );
 };
 
-const ReadItemRow = ({ activity }: Props) => {
+type ReadItemRowProps = Props & {
+  edit: () => void;
+  onDelete: (id: string) => void;
+};
+
+const ReadItemRow = ({ activity, edit, onDelete }: ReadItemRowProps) => {
   return (
     <li className="flex-grow py-2 space-x-2 flex items-center">
       <span className="w-1/2">{activity.name}</span>
@@ -118,6 +126,14 @@ const ReadItemRow = ({ activity }: Props) => {
           minute: "numeric",
         }).format(activity.endAt || new Date())}
       </span>
+
+      <span className="flex-grow" />
+
+      <Button onClick={edit}>Edit</Button>
+
+      <Button variant="destructive" onClick={() => onDelete(activity.id)}>
+        Delete
+      </Button>
     </li>
   );
 };
@@ -128,9 +144,10 @@ export const ActivityItemRow = ({ activity }: Props) => {
   return isEditing ? (
     <EditItemRow activity={activity} onSave={() => setIsEditing(false)} />
   ) : (
-    <div className="flex justify-between items-center">
-      <ReadItemRow activity={activity} />
-      <Button onClick={() => setIsEditing(true)}>Edit</Button>
-    </div>
+    <ReadItemRow
+      activity={activity}
+      edit={() => setIsEditing(true)}
+      onDelete={deleteActivity}
+    />
   );
 };
