@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <>
       <NavBar />
-      <main className="">Home Page</main>
+      <main className="h-full">Home Page</main>
     </>
   );
 }

@@ -4,7 +4,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <NavBar />
-      {children}
+      <main className="h-[93vh]">{children}</main>
     </>
   );
 }

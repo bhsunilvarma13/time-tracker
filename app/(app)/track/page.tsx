@@ -138,9 +138,9 @@ export default async function TrackPage() {
   });
 
   return (
-    <main className="container py-4 space-y-8">
+    <div className="container py-4 space-y-8 h-full">
       <NewActivity activity={currentActivity} />
       <DailyActivities activities={dailyActivities} />
-    </main>
+    </div>
   );
 }
