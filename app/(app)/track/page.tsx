@@ -4,19 +4,9 @@ import { getUserSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Activity } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-
-type TimeProps = {
-  startAt: string;
-};
-
-const Time = ({ startAt }: TimeProps) => {
-  const date = new Date(startAt);
-  const now = new Date();
-
-  const elapsed = now.getTime() - date.getTime();
-
-  return <div>{elapsed}</div>;
-};
+import ActivityDuration from "./duration";
+import { Play, Square } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type NewActivityProps = {
   activity?: Activity | null;
@@ -55,16 +45,25 @@ const NewActivity = ({ activity }: NewActivityProps) => {
   }
 
   return (
-    <div>
-      <h1>What are you working on?</h1>
+    <div className="space-y-2">
+      <h1 className="font-semibold">What are you working on?</h1>
       <form
         action={activity ? stopActivity : startActivity}
-        className="flex items-center space-x-4"
+        className="flex items-center gap-4"
       >
         <Input type="text" name="name" defaultValue={activity?.name || ""} />
         <input type="hidden" name="id" defaultValue={activity?.id || ""} />
-        {activity && <Time startAt={activity.startAt.toString()} />}
-        <Button type="submit">{activity ? "Stop" : "Start"}</Button>
+        {activity && <ActivityDuration startAt={activity.startAt} />}
+        <Button
+          variant="outline"
+          className={cn(
+            "rounded-full px-2",
+            activity ? "bg-red-600 text-white" : ""
+          )}
+          type="submit"
+        >
+          {activity ? <Square size={20} /> : <Play size={20} />}
+        </Button>
       </form>
     </div>
   );
