@@ -107,19 +107,20 @@ export default async function ProjectDetailsPage({
           </DialogContent>
         </Dialog>
       </div>
-      <div className="flex gap-4 items-center">
-        <span
-          className="w-6 h-6 rounded-full"
-          style={{ backgroundColor: project.color || "" }}
-        />
-        <h3>{project.name}</h3>
+      <div className="space-y-4">
+        <div className="flex gap-1 items-center">
+          <span
+            className="w-2 h-2 rounded-full"
+            style={{ backgroundColor: project.color || "" }}
+          />
+          <h3>{project.name}</h3>
+        </div>
         {project?.client && (
-          <div>
-            <h1>Client</h1>
+          <div className="flex gap-1">
+            <h1 className="font-medium">Client:</h1>
             <div>{project.client.name}</div>
           </div>
         )}
-        <div></div>
       </div>
     </div>
   );
