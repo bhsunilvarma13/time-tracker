@@ -109,7 +109,7 @@ type ReadItemRowProps = Props & {
 
 const ReadItemRow = ({ activity, edit, onDelete }: ReadItemRowProps) => {
   return (
-    <li className="flex-grow py-2 space-x-2 flex items-center">
+    <li className="flex-grow py-1 space-x-2 flex items-center">
       <span className="w-1/2">{activity.name}</span>
       <span className="text-sm">
         {new Intl.DateTimeFormat("hi-IN", {
