@@ -31,13 +31,13 @@ function Avatar({ user }: { user: Session["user"] }) {
         <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href="/profile">Profile</Link>
+          <Link href="/admin/profile">Profile</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href="/billing">Billing</Link>
+          <Link href="/admin/teams">Team</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href="/team">Team</Link>
+          <Link href="/admin/billing">Billing</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <Logout />

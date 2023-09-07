@@ -11,7 +11,7 @@ export const ClientsList = ({ clients }: ClientsListProps) => {
     <ul>
       {clients.map((client) => {
         return (
-          <li key={client.id} className="flex gap-2 items-center">
+          <li key={client.id} className="flex gap-2 items-center my-2">
             <span
               className="w-4 h-4 rounded-full"
               style={{ backgroundColor: client.color || "" }}
