@@ -30,27 +30,33 @@ type NewActivityProps = {
 };
 
 const NewActivity = ({ activity, clients, projects }: NewActivityProps) => {
-  async function startActivity(data: FormData) {
+  async function upsertActivity(data: FormData) {
     "use server";
 
     const user = await getUserSession();
 
-    await prisma.activity.create({
-      data: {
+    const client = data.get("client") as string;
+
+    const project = data.get("project") as string;
+
+    await prisma.activity.upsert({
+      where: {
+        id: data.get("id") as string,
+      },
+
+      create: {
         user: { connect: { id: user.id } },
         tenant: { connect: { id: user.tenant.id } },
         name: data.get("name") as string,
         startAt: new Date(),
-        client: {
-          connect: {
-            id: (data.get("client") as string) || undefined,
-          },
-        },
-        project: {
-          connect: {
-            id: (data.get("project") as string) || undefined,
-          },
-        },
+        client: !!client ? { connect: { id: client } } : undefined,
+        project: !!project ? { connect: { id: project } } : undefined,
+      },
+
+      update: {
+        name: data.get("name") as string,
+        client: !!client ? { connect: { id: client } } : undefined,
+        project: !!project ? { connect: { id: project } } : undefined,
       },
     });
 
@@ -59,6 +65,11 @@ const NewActivity = ({ activity, clients, projects }: NewActivityProps) => {
 
   async function stopActivity(data: FormData) {
     "use server";
+
+    const client = data.get("client") as string;
+
+    const project = data.get("project") as string;
+
     await prisma.activity.update({
       where: {
         id: data.get("id") as string,
@@ -66,6 +77,9 @@ const NewActivity = ({ activity, clients, projects }: NewActivityProps) => {
 
       data: {
         endAt: new Date(),
+        name: data.get("name") as string,
+        client: !!client ? { connect: { id: client } } : undefined,
+        project: !!project ? { connect: { id: project } } : undefined,
       },
     });
     revalidatePath("/track");
@@ -75,7 +89,7 @@ const NewActivity = ({ activity, clients, projects }: NewActivityProps) => {
     <div className="space-y-2">
       <h1 className="text-lg font-semibold">What are you working on?</h1>
       <form
-        action={activity ? stopActivity : startActivity}
+        action={activity ? stopActivity : upsertActivity}
         className="flex items-center gap-2"
       >
         <Input type="text" name="name" defaultValue={activity?.name || ""} />
