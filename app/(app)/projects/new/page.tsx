@@ -6,13 +6,13 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export default async function NewClientPage() {
+export default async function NewProjectPage() {
   async function onCreate(data: FormData) {
     "use server";
 
     const user = await getUserSession();
 
-    const client = await prisma.client.create({
+    const project = await prisma.project.create({
       data: {
         name: data.get("name") as string,
         color: data.get("colour") as string,
@@ -20,9 +20,8 @@ export default async function NewClientPage() {
       },
     });
 
-    revalidatePath("/clients");
-
-    redirect("/clients");
+    revalidatePath("/projects");
+    redirect("/projects");
   }
 
   return (
@@ -31,17 +30,17 @@ export default async function NewClientPage() {
       className="max-w-lg mx-auto py-8 gap-4 flex flex-col"
     >
       <div className="grid w-full max-w-sm items-center gap-1.5">
-        <Label htmlFor="email">Client Name</Label>
-        <Input type="text" name="name" placeholder="Client name" required />
+        <Label htmlFor="email">Project Name</Label>
+        <Input type="text" name="name" placeholder="Project name" required />
       </div>
 
       <div className="grid w-full max-w-sm items-center gap-1.5">
-        <Label htmlFor="email">Client colour</Label>
-        <Input type="color" name="colour" placeholder="Client colour" />
+        <Label htmlFor="email">Project Colour</Label>
+        <Input type="color" name="colour" placeholder="Project colour" />
       </div>
 
       <div>
-        <Button type="submit">Add Client</Button>
+        <Button type="submit">Add Project</Button>
       </div>
     </form>
   );

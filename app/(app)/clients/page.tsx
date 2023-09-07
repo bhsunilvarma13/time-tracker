@@ -3,6 +3,7 @@ import { getUserSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ClientListHeader, ClientsList } from "./clients";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 const BlankSlate = () => {
   return (
@@ -22,11 +23,17 @@ const BlankSlate = () => {
 
 export default async function ClientsPage() {
   const user = await getUserSession();
+
   const clients = await prisma.client.findMany({
     where: {
       tenantId: user.tenant.id,
     },
   });
+
+  if (clients.length > 0) {
+    redirect(`/clients/${clients[0].id}`);
+  }
+
   return (
     <div className="container py-4 space-y-2 h-full">
       <ClientListHeader />

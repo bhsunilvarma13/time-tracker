@@ -70,7 +70,7 @@ model Project {
   updatedAt  DateTime   @updatedAt
   tenant     Tenant     @relation(fields: [tenantId], references: [id])
   tenantId   String
-  client     Client     @relation(fields: [clientId], references: [id])
-  clientId   String
+  client     Client?    @relation(fields: [clientId], references: [id])
+  clientId   String?
   activities Activity[]
 }

@@ -27,7 +27,7 @@ export const ClientsList = ({ clients }: ClientsListProps) => {
 export const ClientListHeader = () => {
   return (
     <div className="flex items-center justify-between">
-      <h2 className="text-lg font-medium">Clients</h2>
+      <h2 className="text-lg font-semibold">Clients</h2>
       <Button asChild>
         <Link href="/clients/new">Create</Link>
       </Button>

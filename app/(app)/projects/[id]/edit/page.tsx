@@ -1,37 +1,40 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { getUserSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Label } from "@/components/ui/label";
 import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 
-export default async function EditClientPage({
+export default async function EditProjectPage({
   params: { id },
 }: {
   params: { id: string };
 }) {
   const user = await getUserSession();
 
-  const client = await prisma.client.findFirst({
+  const project = await prisma.project.findFirst({
     where: {
       id: id,
       tenantId: user.tenant.id,
     },
+    include: {
+      client: true,
+    },
   });
 
-  if (!client) throw notFound();
+  if (!project) throw notFound();
 
-  async function editClient(data: FormData) {
+  async function editProject(data: FormData) {
     "use server";
 
-    if (!client) throw notFound();
+    if (!project) throw notFound();
 
     const user = await getUserSession();
 
-    await prisma.client.update({
+    await prisma.project.update({
       where: {
-        id: client.id,
+        id: project.id,
         tenant: {
           id: user.tenant.id,
         },
@@ -43,22 +46,22 @@ export default async function EditClientPage({
       },
     });
 
-    revalidatePath(`/clients/${client.id}`);
+    revalidatePath(`/projects/${project.id}`);
 
-    redirect(`/clients/${client.id}`);
+    redirect(`/projects/${project.id}`);
   }
 
   return (
     <>
-      <h1 className="text-lg font-semibold py-6">Edit Client</h1>
-      <form action={editClient} className="max-w-lg gap-4 flex flex-col">
+      <h1 className="text-lg font-semibold py-6">Edit Project</h1>
+      <form action={editProject} className="max-w-lg gap-4 flex flex-col">
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="email">Project Name</Label>
           <Input
             type="text"
             name="name"
             placeholder="Project name"
-            defaultValue={client.name}
+            defaultValue={project.name}
             required
           />
         </div>
@@ -69,7 +72,7 @@ export default async function EditClientPage({
             type="color"
             name="color"
             placeholder="Project colour"
-            defaultValue={client.color || ""}
+            defaultValue={project.color || ""}
           />
         </div>
 

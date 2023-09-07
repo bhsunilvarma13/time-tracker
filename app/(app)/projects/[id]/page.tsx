@@ -22,46 +22,51 @@ import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-export default async function ClientDetailsPage({
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export default async function ProjectDetailsPage({
   params: { id },
 }: {
   params: { id: string };
 }) {
   const user = await getUserSession();
 
-  const client = await prisma.client.findFirst({
+  const project = await prisma.project.findFirst({
     where: {
       id: id,
       tenantId: user.tenant.id,
     },
+    include: {
+      client: true,
+    },
   });
 
-  if (!client) {
+  if (!project) {
     throw notFound();
   }
 
-  async function deleteClient() {
+  async function deleteProject() {
     "use server";
-    if (!client) throw notFound();
+    if (!project) throw new Error("Project not found");
 
     const user = await getUserSession();
 
-    await prisma.client.delete({
+    await prisma.project.delete({
       where: {
-        id: client?.id,
+        id: project?.id,
         tenant: {
           id: user.tenant.id,
         },
       },
     });
 
-    redirect("/clients");
+    redirect("/projects");
   }
 
   return (
     <div className="space-y-2 py-4 h-full w-full">
       <div className="flex w-full justify-between items-center">
-        <h2 className="text-lg font-semibold">Client Detials</h2>
+        <h2 className="text-lg font-semibold">Project Details</h2>
         <Dialog>
           <DropdownMenu>
             <DropdownMenuTrigger>
@@ -73,7 +78,7 @@ export default async function ClientDetailsPage({
 
               <DropdownMenuSeparator />
 
-              <Link href={`/clients/${client.id}/edit`}>
+              <Link href={`/projects/${project.id}/edit`}>
                 <DropdownMenuItem>Edit</DropdownMenuItem>
               </Link>
 
@@ -86,14 +91,14 @@ export default async function ClientDetailsPage({
           </DropdownMenu>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Do you want to delete this client?</DialogTitle>
+              <DialogTitle>Do you want to delete this project?</DialogTitle>
               <DialogDescription>
                 This action cannot be undone. Make sure you want to delete this
-                client.
+                project.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <form action={deleteClient}>
+              <form action={deleteProject}>
                 <Button type="submit" variant="destructive">
                   Delete
                 </Button>
@@ -105,9 +110,16 @@ export default async function ClientDetailsPage({
       <div className="flex gap-4 items-center">
         <span
           className="w-6 h-6 rounded-full"
-          style={{ backgroundColor: client.color || "" }}
+          style={{ backgroundColor: project.color || "" }}
         />
-        <h3>{client.name}</h3>
+        <h3>{project.name}</h3>
+        {project?.client && (
+          <div>
+            <h1>Client</h1>
+            <div>{project.client.name}</div>
+          </div>
+        )}
+        <div></div>
       </div>
     </div>
   );
