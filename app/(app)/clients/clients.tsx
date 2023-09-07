@@ -11,7 +11,11 @@ export const ClientsList = ({ clients }: ClientsListProps) => {
     <ul>
       {clients.map((client) => {
         return (
-          <li key={client.id}>
+          <li key={client.id} className="flex gap-2 items-center">
+            <span
+              className="w-4 h-4 rounded-full"
+              style={{ backgroundColor: client.color || "" }}
+            />
             <Link href={`/clients/${client.id}`}>{client.name}</Link>
           </li>
         );

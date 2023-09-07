@@ -19,7 +19,7 @@ export default async function ClientsLayout({
         <ClientListHeader />
         <ClientsList clients={clients} />
       </div>
-      <div className="px-4">{children}</div>
+      <div className="px-4 w-1/2">{children}</div>
     </div>
   );
 }
