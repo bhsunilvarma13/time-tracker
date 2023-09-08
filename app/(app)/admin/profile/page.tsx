@@ -29,7 +29,7 @@ export default async function ProfilePage() {
           />
           <span className="text-xs text-neutral-600">
             If you&apos;d like to change your profile picture, you can edit it
-            on{" "}
+            here on{" "}
             <a
               className="text-blue-500 hover:text-blue-600 underline"
               href="https://myaccount.google.com/profile/photo/edit"
